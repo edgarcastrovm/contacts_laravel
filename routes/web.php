@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\ContactController;
+use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,24 +22,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/ruta',function(){
-    return "hola mundo";
-});
-Route::get('/test',function(){
-    return "GET OK";
-});
-Route::post('/test',function(){
-    return "POST OK";
-});
-Route::put('/test',function(){
-    return "PUT OK";
-});
-Route::patch('/test',function(){
-    return "PATCH OK";
-});
-Route::delete('/test',function(){
-    return "DELETE OK";
-});
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/contact',function(){
+    return Response::view('contact');
+});
+
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+
+Route::get('/contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+
+Route::post('/contacts',[ContactController::class, 'store'])->name('contacts.store');
