@@ -16,7 +16,7 @@ class ContactController extends Controller
     public function index()
     {
         $data = Contact::all();
-        return response()->json($data,200);
+        return view('Contacts.index', ['contacts' => $data]);
     }
 
     /**
@@ -26,7 +26,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        return view('contact');
+        return view('Contacts.create');
     }
 
     /**
@@ -37,20 +37,15 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $errors = [];
-        if( is_null($request->get('con_name'))){
-            $errors["name"] = "The name is required";
-        }
-        if( is_null($request->get('con_phone_number'))){
-            $errors["phone_number"] = "The phone number is required";
-        }
-        if(count($errors)){
-            //return Response::redirectToRoute('contacts.create')->withErrors($errors);
-            return back()->withErrors($errors);
-        }
+        $request->validate([
+            'con_name' => 'required',
+            'con_phone_number' => 'required|digits_between:9,15',
+            'con_email' => ['required', 'email'],
+            'con_age' => ['required', 'numeric', 'min:1']
+        ]);
 
         Contact::create($request->all());
-        return route('contacts.index');
+        return redirect()->route('contacts.index');
     }
 
     /**
@@ -61,7 +56,9 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
-        //
+        $data = Contact::find($contact);
+        //dd($data[0]);
+        return view('Contacts.show', ['contact' => $data[0]]);
     }
 
     /**
@@ -72,7 +69,9 @@ class ContactController extends Controller
      */
     public function edit(Contact $contact)
     {
-        //
+        $data = Contact::find($contact);
+        //dd($data[0]);
+        return view('Contacts.edit', ['contact' => $data[0]]);
     }
 
     /**
@@ -84,7 +83,15 @@ class ContactController extends Controller
      */
     public function update(Request $request, Contact $contact)
     {
-        //
+        $data = $request->validate([
+            'con_name' => 'required',
+            'con_phone_number' => 'required|digits_between:9,15',
+            'con_email' => ['required', 'email'],
+            'con_age' => ['required', 'numeric', 'min:1']
+        ]);
+
+        $contact->update($data);
+        return redirect()->route('contacts.index');
     }
 
     /**
@@ -95,6 +102,6 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        //
+        $contact->delete();
     }
 }

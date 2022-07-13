@@ -1,3 +1,6 @@
+Admin Login
+email: edgar.castro.vm@gmail.com
+clave: admin1234
 
 ``` bash
 composer install
