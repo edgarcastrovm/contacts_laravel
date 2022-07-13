@@ -15,7 +15,8 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $data = Contact::all();
+        //$data = Contact::query()->where('user_id',auth()->id())->get();
+        $data = auth()->user()->contacts;
         return view('Contacts.index', ['contacts' => $data]);
     }
 
@@ -37,14 +38,15 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'con_name' => 'required',
             'con_phone_number' => 'required|digits_between:9,15',
             'con_email' => ['required', 'email'],
             'con_age' => ['required', 'numeric', 'min:1']
         ]);
-
-        Contact::create($request->all());
+        //$data['user_id'] = auth()->id();
+        //Contact::create($data);
+        auth()->user()->contacts()->create($data);
         return redirect()->route('contacts.index');
     }
 
